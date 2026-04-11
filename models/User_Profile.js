@@ -4,7 +4,7 @@ const UserSchema = new mongoose.Schema({
     gamertag: { type: String, unique: true },
     email: { type: String, unique: true },
     hashed_password: { type: String, required: true },
-    region_id: Number,
+    country: String,
     account_status: { type: String, enum: ['ACTIVE', 'BANNED', 'SUSPENDED'], default: 'ACTIVE' }
 });
 module.exports = mongoose.model('User_Profile', UserSchema);
