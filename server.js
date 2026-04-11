@@ -186,7 +186,8 @@ app.post('/api/login', async (req, res) => {
 });
 
 // --- 5. SERVER START ---
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000; // Render likes port 10000
 app.listen(PORT, () => {
     console.log(`🚀 X-Cloud Server running on port ${PORT}`);
     console.log(`🔗 Checking from Phone? Use your Ngrok URL!`);
