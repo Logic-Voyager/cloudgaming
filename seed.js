@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGO_URI)
         Billing.deleteMany({}), ServerNode.deleteMany({}), Addon.deleteMany({})
     ]);
 
-    // 1. Seed Subscriptions (tier_details + monthly_price as float)
+    // 1. Seed Subscriptions
     await Subscription.insertMany([
         { 
             tier_id: 1, 
@@ -40,20 +40,22 @@ mongoose.connect(process.env.MONGO_URI)
         }
     ]);
 
-  // 2. Seed 10 User Profiles (Added hashed_password to satisfy validation)
+    // 2. Seed 10 User Profiles (user_id field REMOVED)
+
     await User.insertMany([
-        { user_id: "u101", gamertag: "MasterChief117", email: "chief@unsc.com", country: "USA", account_status: "ACTIVE", hashed_password: "dummy_hash_101" },
-        { user_id: "u102", gamertag: "NobleSix", email: "six@reach.com", country: "India", account_status: "ACTIVE", hashed_password: "dummy_hash_102" },
-        { user_id: "u103", gamertag: "DoomSlayer", email: "slayer@id.com", country: "United Kingdom", account_status: "ACTIVE", hashed_password: "dummy_hash_103" },
-        { user_id: "u104", gamertag: "Dragonborn", email: "dovah@skyrim.com", country: "Germany", account_status: "SUSPENDED", hashed_password: "dummy_hash_104" },
-        { user_id: "u105", gamertag: "MarcusFenix", email: "fenix@delta.com", country: "Australia", account_status: "ACTIVE", hashed_password: "dummy_hash_105" },
-        { user_id: "u106", gamertag: "Arbiter", email: "thel@vadam.com", country: "Canada", account_status: "ACTIVE", hashed_password: "dummy_hash_106" },
-        { user_id: "u107", gamertag: "CortanaAI", email: "blue@halsey.com", country: "Japan", account_status: "ACTIVE", hashed_password: "dummy_hash_107" },
-        { user_id: "u108", gamertag: "GhostRiley", email: "simon@soap.com", country: "UK", account_status: "ACTIVE", hashed_password: "dummy_hash_108" },
-        { user_id: "u109", gamertag: "KratosGod", email: "boy@olympus.com", country: "Greece", account_status: "BANNED", hashed_password: "dummy_hash_109" },
-        { user_id: "u110", gamertag: "LaraCroft", email: "tomb@raider.com", country: "France", account_status: "ACTIVE", hashed_password: "dummy_hash_110" }
+        { full_name: "John-117", gamertag: "MasterChief117", email: "chief@unsc.com", country: "USA", account_status: "ACTIVE", hashed_password: "dummy_hash_101" },
+        { full_name: "Jack-117", gamertag: "NobleSix", email: "six@reach.com", country: "India", account_status: "ACTIVE", hashed_password: "dummy_hash_102" },
+        { full_name: "Josh-117", gamertag: "DoomSlayer", email: "slayer@id.com", country: "United Kingdom", account_status: "ACTIVE", hashed_password: "dummy_hash_103" },
+        { full_name: "Joseph-117", gamertag: "Dragonborn", email: "dovah@skyrim.com", country: "Germany", account_status: "SUSPENDED", hashed_password: "dummy_hash_104" },
+        { full_name: "Rohn-117", gamertag: "MarcusFenix", email: "fenix@delta.com", country: "Australia", account_status: "ACTIVE", hashed_password: "dummy_hash_105" },
+        { full_name: "Harry-117", gamertag: "Arbiter", email: "thel@vadam.com", country: "Canada", account_status: "ACTIVE", hashed_password: "dummy_hash_106" },
+        { full_name: "Hermoine-117", gamertag: "CortanaAI", email: "blue@halsey.com", country: "Japan", account_status: "ACTIVE", hashed_password: "dummy_hash_107" },
+        { full_name: "Robert Ray", gamertag: "GhostRiley", email: "simon@soap.com", country: "UK", account_status: "ACTIVE", hashed_password: "dummy_hash_108" },
+        { full_name: "Rupert Ray", gamertag: "KratosGod", email: "boy@olympus.com", country: "Greece", account_status: "BANNED", hashed_password: "dummy_hash_109" },
+        { full_name: "Rohnny Ray", gamertag: "LaraCroft", email: "tomb@raider.com", country: "France", account_status: "ACTIVE", hashed_password: "dummy_hash_110" }
     ]);
-    // 3. Seed Game Catalog (game_price changed to Float/Number)
+
+    // 3. Seed Game Catalog
     await Game.insertMany([
         { 
             game_id: 501, 
@@ -115,29 +117,29 @@ mongoose.connect(process.env.MONGO_URI)
 
     // 5. Seed Streaming Sessions
     await Session.insertMany([
-        { session_id: 10001, user_id: "u101", game_id: 501, node_id: 901, avg_latency_ms: 24 },
-        { session_id: 10002, user_id: "u103", game_id: 503, node_id: 902, avg_latency_ms: 45 }
+        { session_id: 10001, user_email: "chief@unsc.com", game_id: 501, node_id: 901, avg_latency_ms: 24 },
+        { session_id: 10002, user_email: "slayer@id.com", game_id: 503, node_id: 902, avg_latency_ms: 45 }
     ]);
 
     // 6. Seed Billing History
     await Billing.insertMany([
-        { transaction_id: 88001, user_id: "u101", amount: 14.99, payment_method: "Credit Card", payment_status: "SUCCESS" },
-        { transaction_id: 88002, user_id: "u105", amount: 9.99, payment_method: "Xbox Wallet", payment_status: "SUCCESS" }
+        { transaction_id: 88001, user_email: "chief@unsc.com", amount: 14.99, payment_method: "Credit Card", payment_status: "SUCCESS" },
+        { transaction_id: 88002, user_email: "fenix@delta.com", amount: 9.99, payment_method: "Xbox Wallet", payment_status: "SUCCESS" }
     ]);
 
     // 7. Seed Achievement Logs
     await Achievement.insertMany([
-        { log_id: 7701, user_id: "u101", game_id: 501, award_name: "Legendary Finisher", gs_points: 100 },
-        { log_id: 7702, user_id: "u102", game_id: 502, award_name: "Speed Demon", gs_points: 50 }
+        { log_id: 7701, user_email: "chief@unsc.com", game_id: 501, award_name: "Legendary Finisher", gs_points: 100 },
+        { log_id: 7702, user_email: "six@reach.com", game_id: 502, award_name: "Speed Demon", gs_points: 50 }
     ]);
 
-    // 8. Seed Game Addons (price as float)
+    // 8. Seed Game Addons
     await Addon.insertMany([
         { addon_id: 301, game_id: 501, addon_name: "Spartan Armor Pack", price: 4.99 },
         { addon_id: 302, game_id: 502, addon_name: "Hot Wheels Expansion", price: 19.99 }
     ]);
 
-    console.log("✅ X-Cloud Nexus: All 8 Collections Seeded Successfully!");
+    console.log("✅ X-Cloud Nexus: All 8 Collections Seeded Successfully (without manual user_id)!");
     process.exit();
 })
 .catch(err => {
