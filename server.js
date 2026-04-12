@@ -135,16 +135,32 @@ app.get('/api/achievements', async (req, res) => {
     catch (err) { res.status(500).json({ error: "Error fetching Achievement_Log" }); }
 });
 
-// --- GET: USER PROFILE (Fetch by ID) ---
-app.get('/api/profile/:id', async (req, res) => {
+// // --- GET: USER PROFILE (Fetch by ID) ---
+// app.get('/api/profile', async (req, res) => {
+//     try {
+//         const user = await User.findById(req.params.id);
+//         if (!user) {
+//             return res.status(404).json({ error: "User not found" });
+//         }
+//         res.json(user);
+//     } catch (err) {
+//         res.status(500).json({ error: "Invalid User ID format or server error" });
+//     }
+// });
+// --- GET: USER PROFILE (General / Testing) ---
+app.get('/api/profile', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        // Option A: During testing, just fetch the first user to show data exists
+        const user = await User.findOne({}); 
+
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: "No users found in database" });
         }
+
         res.json(user);
     } catch (err) {
-        res.status(500).json({ error: "Invalid User ID format or server error" });
+        console.error("Profile Fetch Error:", err);
+        res.status(500).json({ error: "Server error fetching profile" });
     }
 });
 
