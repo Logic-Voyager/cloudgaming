@@ -147,19 +147,41 @@ app.get('/api/achievements', async (req, res) => {
 //         res.status(500).json({ error: "Invalid User ID format or server error" });
 //     }
 // });
+
 // --- GET: USER PROFILE (General / Testing) ---
+// app.get('/api/profile', async (req, res) => {
+//     try {
+//         // Option A: During testing, just fetch the first user to show data exists
+//         const user = await User.findOne({}); 
+
+//         if (!user) {
+//             return res.status(404).json({ error: "No users found in database" });
+//         }
+
+//         res.json(user);
+//     } catch (err) {
+//         console.error("Profile Fetch Error:", err);
+//         res.status(500).json({ error: "Server error fetching profile" });
+//     }
+// });
+
 app.get('/api/profile', async (req, res) => {
     try {
-        // Option A: During testing, just fetch the first user to show data exists
-        const user = await User.findOne({}); 
+        // Get the email or ID from the request sent by the Flutter app
+        const userEmail = req.query.email; 
+
+        if (!userEmail) {
+            return res.status(400).json({ error: "Email is required to fetch profile" });
+        }
+
+        const user = await User.findOne({ email: userEmail });
 
         if (!user) {
-            return res.status(404).json({ error: "No users found in database" });
+            return res.status(404).json({ error: "User not found" });
         }
 
         res.json(user);
     } catch (err) {
-        console.error("Profile Fetch Error:", err);
         res.status(500).json({ error: "Server error fetching profile" });
     }
 });
