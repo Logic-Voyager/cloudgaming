@@ -165,24 +165,25 @@ app.get('/api/achievements', async (req, res) => {
 //     }
 // });
 
+// --- GET: SPECIFIC USER PROFILE ---
 app.get('/api/profile', async (req, res) => {
     try {
-        // Get the email or ID from the request sent by the Flutter app
-        const userEmail = req.query.email; 
+        const { email } = req.query; // This looks for ?email=... in the URL
 
-        if (!userEmail) {
-            return res.status(400).json({ error: "Email is required to fetch profile" });
+        if (!email) {
+            return res.status(400).json({ error: "Missing email parameter" });
         }
 
-        const user = await User.findOne({ email: userEmail });
+        // Find exactly ONE user by email
+        const user = await User.findOne({ email: email });
 
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        res.json(user);
+        res.json(user); // Sends only the single user's data
     } catch (err) {
-        res.status(500).json({ error: "Server error fetching profile" });
+        res.status(500).json({ error: "Server error" });
     }
 });
 
