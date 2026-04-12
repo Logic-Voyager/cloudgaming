@@ -6,5 +6,4 @@ const SubSchema = new mongoose.Schema({
     monthly_price: Number,
     max_resolution: String
 });
-// ADD THE THIRD ARGUMENT HERE TO MATCH ATLAS EXACTLY
-module.exports = mongoose.model('Subscription_Tier', SubSchema, 'Subscription_Tier');
+module.exports = mongoose.model('Subscription_Tier', SubSchema);
