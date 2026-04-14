@@ -5,4 +5,4 @@ const AddonSchema = new mongoose.Schema({
     addon_name: String,
     price: Number
 });
-module.exports = mongoose.model('Game_Addons', AddonSchema);
+module.exports = mongoose.model('Game_Addons', AddonSchema, 'Game_Addons');

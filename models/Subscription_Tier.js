@@ -6,4 +6,4 @@ const SubSchema = new mongoose.Schema({
     monthly_price: Number,
     max_resolution: String
 });
-module.exports = mongoose.model('Subscription_Tier', SubSchema);
+module.exports = mongoose.model('Subscription_Tier', SubSchema, 'Subscription_Tier');

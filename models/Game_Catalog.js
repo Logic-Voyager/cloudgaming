@@ -12,4 +12,4 @@ const GameSchema = new mongoose.Schema({
     game_price: Number         
 });
 
-module.exports = mongoose.model('Game_Catalog', GameSchema);
+module.exports = mongoose.model('Game_Catalog', GameSchema, 'Game_Catalog');

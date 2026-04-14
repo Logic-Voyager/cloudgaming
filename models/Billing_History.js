@@ -7,4 +7,4 @@ const BillingSchema = new mongoose.Schema({
     payment_status: { type: String, enum: ['SUCCESS', 'PENDING', 'FAILED'] },
     createdAt: {type: Date, default: Date.now}
 });
-module.exports = mongoose.model('Billing_History', BillingSchema);
+module.exports = mongoose.model('Billing_History', BillingSchema, 'Billing_History');

@@ -8,4 +8,4 @@ const UserSchema = new mongoose.Schema({
     country:{type: String, required: true},
     account_status: { type: String, enum: ['ACTIVE', 'BANNED', 'SUSPENDED'], default: 'ACTIVE' }
 });
-module.exports = mongoose.model('User_Profile', UserSchema);
+module.exports = mongoose.model('User_Profile', UserSchema, 'User_Profile');
