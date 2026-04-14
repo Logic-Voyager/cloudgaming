@@ -409,7 +409,45 @@ app.post('/api/login', async (req, res) => {
 
 });
 
+// Add this under your API ROUTES section
+app.post('/api/billing/add', async (req, res) => {
+    try {
+        let uniqueId;
+        let exists = true;
 
+        // 1. Unique 6-digit transaction ID generation
+        while (exists) {
+            uniqueId = Math.floor(100000 + Math.random() * 900000);
+            const check = await Billing.findOne({ transaction_id: uniqueId });
+            if (!check) exists = false;
+        }
+
+        // 2. Create the record using the email from the request
+        const newRecord = new Billing({
+            transaction_id: uniqueId,
+            email: req.body.email, 
+            amount: req.body.amount,
+            payment_method: "Online",
+            payment_status: "SUCCESS"
+        });
+
+        await newRecord.save();
+        res.status(201).json(newRecord);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Fetch Billing History for a specific user
+app.get('/api/billing/history', async (req, res) => {
+    try {
+        const { email } = req.query;
+        const history = await Billing.find({ email: email });
+        res.json(history);
+    } catch (err) {
+        res.status(500).json({ error: "Error fetching billing history" });
+    }
+});
 
 // --- 5. SERVER START ---
 
