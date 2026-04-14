@@ -110,162 +110,94 @@ app.get('/api/games', async (req, res) => {
     catch (err) { res.status(500).json({ error: "Error fetching Game_Catalog" }); }
 });
 
-app.get('/api/addons', async (req, res) => {
-    try { res.json(await Addon.find()); } 
-    catch (err) { res.status(500).json({ error: "Error fetching Game_Addons" }); }
-});
-
-app.get('/api/servers', async (req, res) => {
-    try { res.json(await ServerNode.find()); } 
-    catch (err) { res.status(500).json({ error: "Error fetching Server_Node" }); }
-});
-
-app.get('/api/sessions', async (req, res) => {
-    try { res.json(await Session.find()); } 
-    catch (err) { res.status(500).json({ error: "Error fetching Streaming_Session" }); }
-});
-
-app.get('/api/billing', async (req, res) => {
-    try { res.json(await Billing.find()); } 
-    catch (err) { res.status(500).json({ error: "Error fetching Billing_History" }); }
-});
-
-app.get('/api/achievements', async (req, res) => {
-    try { res.json(await Achievement.find()); } 
-    catch (err) { res.status(500).json({ error: "Error fetching Achievement_Log" }); }
-});
-
-// // --- GET: USER PROFILE (Fetch by ID) ---
-// app.get('/api/profile', async (req, res) => {
-//     try {
-//         const user = await User.findById(req.params.id);
-//         if (!user) {
-//             return res.status(404).json({ error: "User not found" });
-//         }
-//         res.json(user);
-//     } catch (err) {
-//         res.status(500).json({ error: "Invalid User ID format or server error" });
-//     }
-// });
-
-// --- GET: USER PROFILE (General / Testing) ---
-// app.get('/api/profile', async (req, res) => {
-//     try {
-//         // Option A: During testing, just fetch the first user to show data exists
-//         const user = await User.findOne({}); 
-
-//         if (!user) {
-//             return res.status(404).json({ error: "No users found in database" });
-//         }
-
-//         res.json(user);
-//     } catch (err) {
-//         console.error("Profile Fetch Error:", err);
-//         res.status(500).json({ error: "Server error fetching profile" });
-//     }
-// });
-
 // --- GET: SPECIFIC USER PROFILE ---
 app.get('/api/profile', async (req, res) => {
     try {
-        const { email } = req.query; // This looks for ?email=... in the URL
+        const { email } = req.query; 
+        if (!email) return res.status(400).json({ error: "Missing email parameter" });
 
-        if (!email) {
-            return res.status(400).json({ error: "Missing email parameter" });
-        }
-
-        // Find exactly ONE user by email
         const user = await User.findOne({ email: email });
+        if (!user) return res.status(404).json({ error: "User not found" });
 
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        res.json(user); // Sends only the single user's data
+        res.json(user);
     } catch (err) {
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: "Server error fetching profile" });
     }
 });
 
-// --- POST: SIGNUP ROUTE (Auto-generating ID via MongoDB _id) ---
+// --- POST: BILLING / ADD TRANSACTION ---
+app.post('/api/billing/add', async (req, res) => {
+    try {
+        let uniqueId;
+        let exists = true;
+
+        // Generate a unique 6-digit transaction ID
+        while (exists) {
+            uniqueId = Math.floor(100000 + Math.random() * 900000);
+            const check = await Billing.findOne({ transaction_id: uniqueId });
+            if (!check) exists = false;
+        }
+
+        const newRecord = new Billing({
+            transaction_id: uniqueId,
+            email: req.body.email, // Joins Billing to User via Email
+            amount: req.body.amount,
+            payment_method: "Online",
+            payment_status: "SUCCESS"
+        });
+
+        await newRecord.save();
+        res.status(201).json(newRecord);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- GET: USER BILLING HISTORY ---
+app.get('/api/billing/history', async (req, res) => {
+    try {
+        const { email } = req.query;
+        if (!email) return res.status(400).json({ error: "Email query required" });
+        
+        const history = await Billing.find({ email: email });
+        res.json(history);
+    } catch (err) {
+        res.status(500).json({ error: "Error fetching billing history" });
+    }
+});
+
+// --- POST: SIGNUP ---
 app.post('/api/signup', async (req, res) => {
     try {
         const { full_name, gamertag, email, hashed_password, country } = req.body;
-
         const newUser = new User({
-            full_name,
-            gamertag,
-            email,
-            hashed_password,
-            country,
+            full_name, gamertag, email, hashed_password, country,
             account_status: "ACTIVE"
         });
-
         const savedUser = await newUser.save();
-        
-        // We return the auto-generated _id as 'user_id' for Himanshu
-        res.status(201).json({ 
-            message: "User registered successfully!", 
-            user_id: savedUser._id,
-            gamertag: savedUser.gamertag 
-        });
-        
-        console.log(`✅ New user registered: ${gamertag} with MongoID: ${savedUser._id}`);
+        res.status(201).json({ message: "User registered!", user_id: savedUser._id });
     } catch (err) {
-        console.error("Signup Error:", err);
-        res.status(500).json({ error: "Registration failed. Check if all placeholders are filled." });
+        res.status(500).json({ error: "Registration failed." });
     }
 });
 
-// --- POST: LOGIN ROUTE (Simple check) ---
+// --- POST: LOGIN ---
 app.post('/api/login', async (req, res) => {
     try {
         const { email, hashed_password } = req.body;
         const user = await User.findOne({ email, hashed_password });
-
         if (user) {
-            res.status(200).json({ 
-                message: "Login successful!", 
-                user_id: user._id, 
-                gamertag: user.gamertag 
-            });
+            res.status(200).json({ message: "Login successful!", user_id: user._id, gamertag: user.gamertag });
         } else {
-            res.status(401).json({ error: "Invalid email or password" });
+            res.status(401).json({ error: "Invalid credentials" });
         }
-    } catch (err) {
-        res.status(500).json({ error: "Server error during login" });
-    }
-});
-
-
-// --- GET: SPECIFIC USER PROFILE ---
-app.get('/api/profile', async (req, res) => {
-    try {
-        const { email } = req.query; // This looks for ?email=... in the URL
-
-        if (!email) {
-            return res.status(400).json({ error: "Missing email parameter" });
-        }
-
-        // Find exactly ONE user by email
-        const user = await User.findOne({ email: email });
-
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        res.json(user); // Sends only the single user's data
     } catch (err) {
         res.status(500).json({ error: "Server error" });
     }
 });
 
-
 // --- 5. SERVER START ---
-// const PORT = process.env.PORT || 5000;
-const PORT = process.env.PORT || 10000; // Render likes port 10000
+const PORT = process.env.PORT || 10000; 
 app.listen(PORT, () => {
     console.log(`🚀 X-Cloud Server running on port ${PORT}`);
-    console.log(`🔗 Checking from Phone? Use your Ngrok URL!`);
 });
-
