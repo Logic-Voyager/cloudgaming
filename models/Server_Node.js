@@ -5,4 +5,5 @@ const NodeSchema = new mongoose.Schema({
     hardware_spec: String,
     node_status: { type: String, enum: ['ONLINE', 'MAINTENANCE', 'FULL'] }
 });
-module.exports = mongoose.model('Server_Node', NodeSchema, 'Server_Node');
+module.exports = mongoose.model('Server_Node', NodeSchema);
+// module.exports = mongoose.model('Server_Node', NodeSchema, 'Server_Node');

@@ -6,4 +6,5 @@ const AchievementSchema = new mongoose.Schema({
     award_name: String,
     gs_points: Number
 });
-module.exports = mongoose.model('Achievement_Log', AchievementSchema, 'Achievement_Log');
+module.exports = mongoose.model('Achievement_Log', AchievementSchema)
+// module.exports = mongoose.model('Achievement_Log', AchievementSchema, 'Achievement_Log');

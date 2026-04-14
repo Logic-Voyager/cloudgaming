@@ -8,4 +8,5 @@ const SessionSchema = new mongoose.Schema({
     end_time: Date,
     avg_latency_ms: Number
 });
-module.exports = mongoose.model('Streaming_Session', SessionSchema, 'Streaming_Session');
+module.exports = mongoose.model('Streaming_Session', SessionSchema);
+// module.exports = mongoose.model('Streaming_Session', SessionSchema, 'Streaming_Session');
