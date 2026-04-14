@@ -62,147 +62,85 @@
 
 
 const express = require('express');
-
 const mongoose = require('mongoose');
-
 const cors = require('cors');
-
 require('dotenv').config();
 
 
 
 // --- 1. IMPORT MODELS ---
-
 const User = require('./models/User_Profile');
-
 const Game = require('./models/Game_Catalog');
-
 const Session = require('./models/Streaming_Session');
-
 const Subscription = require('./models/Subscription_Tier');
-
 const Achievement = require('./models/Achievement_Log');
-
 const Billing = require('./models/Billing_History');
-
 const ServerNode = require('./models/Server_Node');
-
 const Addon = require('./models/Game_Addons');
 
-
-
 const app = express();
-
-
 
 // --- 2. MIDDLEWARE ---
 
 app.use(cors());
-
 app.use(express.json());
-
 
 
 // --- 3. DATABASE CONNECTION ---
 
 mongoose.connect(process.env.MONGO_URI)
-
     .then(() => console.log("🔥 X-Cloud Nexus: DB Connected Successfully"))
-
     .catch(err => console.error("❌ MongoDB Connection Error:", err));
-
-
 
 // --- 4. API ROUTES ---
 
-
-
 app.get('/', (req, res) => {
-
     res.send("<h1>🚀 X-Cloud Nexus Backend is Online!</h1><p>Status: Connected to MongoDB Atlas</p>");
-
 });
-
-
 
 // GET Endpoints for all Collections
 
 app.get('/api/users', async (req, res) => {
-
     try { res.json(await User.find()); }
-
     catch (err) { res.status(500).json({ error: "Error fetching User_Profile" }); }
-
 });
 
 
 
 app.get('/api/subscriptions', async (req, res) => {
-
     try { res.json(await Subscription.find()); }
-
     catch (err) { res.status(500).json({ error: "Error fetching Subscription_Tier" }); }
-
 });
-
-
 
 app.get('/api/games', async (req, res) => {
-
     try { res.json(await Game.find()); }
-
     catch (err) { res.status(500).json({ error: "Error fetching Game_Catalog" }); }
-
 });
-
-
 
 app.get('/api/addons', async (req, res) => {
-
     try { res.json(await Addon.find()); }
-
     catch (err) { res.status(500).json({ error: "Error fetching Game_Addons" }); }
-
 });
-
-
 
 app.get('/api/servers', async (req, res) => {
-
     try { res.json(await ServerNode.find()); }
-
     catch (err) { res.status(500).json({ error: "Error fetching Server_Node" }); }
-
 });
-
-
 
 app.get('/api/sessions', async (req, res) => {
-
     try { res.json(await Session.find()); }
-
     catch (err) { res.status(500).json({ error: "Error fetching Streaming_Session" }); }
-
 });
-
-
 
 app.get('/api/billing', async (req, res) => {
-
     try { res.json(await Billing.find()); }
-
     catch (err) { res.status(500).json({ error: "Error fetching Billing_History" }); }
-
 });
-
 
 
 app.get('/api/achievements', async (req, res) => {
-
     try { res.json(await Achievement.find()); }
-
     catch (err) { res.status(500).json({ error: "Error fetching Achievement_Log" }); }
-
 });
 
 
@@ -270,143 +208,75 @@ app.get('/api/achievements', async (req, res) => {
 // --- GET: SPECIFIC USER PROFILE ---
 
 app.get('/api/profile', async (req, res) => {
-
     try {
-
         const { email } = req.query; // This looks for ?email=... in the URL
-
-
-
         if (!email) {
-
             return res.status(400).json({ error: "Missing email parameter" });
-
         }
-
-
-
         // Find exactly ONE user by email
-
         const user = await User.findOne({ email: email });
-
-
-
         if (!user) {
-
             return res.status(404).json({ error: "User not found" });
-
         }
-
-
-
         res.json(user); // Sends only the single user's data
-
     } catch (err) {
-
         res.status(500).json({ error: "Server error" });
-
     }
 
 });
 
-
-
 // --- POST: SIGNUP ROUTE (Auto-generating ID via MongoDB _id) ---
 
 app.post('/api/signup', async (req, res) => {
-
     try {
-
         const { full_name, gamertag, email, hashed_password, country } = req.body;
-
-
-
         const newUser = new User({
-
             full_name,
-
             gamertag,
-
             email,
-
             hashed_password,
-
             country,
-
             account_status: "ACTIVE"
-
         });
 
-
-
         const savedUser = await newUser.save();
-
-
-
         // We return the auto-generated _id as 'user_id' for Himanshu
 
         res.status(201).json({
-
             message: "User registered successfully!",
-
             user_id: savedUser._id,
-
             gamertag: savedUser.gamertag
-
         });
-
-
-
         console.log(`✅ New user registered: ${gamertag} with MongoID: ${savedUser._id}`);
 
     } catch (err) {
-
         console.error("Signup Error:", err);
-
         res.status(500).json({ error: "Registration failed. Check if all placeholders are filled." });
-
     }
-
 });
 
 
 
 // --- POST: LOGIN ROUTE (Simple check) ---
-
 app.post('/api/login', async (req, res) => {
-
     try {
-
         const { email, hashed_password } = req.body;
-
         const user = await User.findOne({ email, hashed_password });
 
-
-
         if (user) {
-
             res.status(200).json({
-
                 message: "Login successful!",
-
                 user_id: user._id,
-
                 gamertag: user.gamertag
-
             });
 
         } else {
-
             res.status(401).json({ error: "Invalid email or password" });
-
         }
 
     } catch (err) {
-
         res.status(500).json({ error: "Server error during login" });
-
     }
-
 });
 
 // Add this under your API ROUTES section
@@ -454,11 +324,7 @@ app.get('/api/billing/history', async (req, res) => {
 // const PORT = process.env.PORT || 5000;
 
 const PORT = process.env.PORT || 10000; // Render likes port 10000
-
 app.listen(PORT, () => {
-
     console.log(`🚀 X-Cloud Server running on port ${PORT}`);
-
     console.log(`🔗 Checking from Phone? Use your Ngrok URL!`);
-
 });
