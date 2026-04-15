@@ -308,6 +308,22 @@ app.post('/api/billing/add', async (req, res) => {
     }
 });
 
+
+// routes/addonRoutes.js or inside your server.js
+const GameAddons = require('./models/Game_Addons'); // The schema you provided
+
+router.get('/api/addons/:game_id', async (req, res) => {
+    try {
+        const gId = parseInt(req.params.game_id);
+        const addons = await GameAddons.find({ game_id: gId });
+        res.status(200).json(addons);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch addons" });
+    }
+});
+
+
+
 // Fetch Billing History for a specific user
 app.get('/api/billing/history', async (req, res) => {
     try {

@@ -15,12 +15,12 @@ mongoose.connect(process.env.MONGO_URI)
 .then(async () => {
     console.log("🌱 Seeding Updated X-Cloud Nexus Data to Atlas...");
 
-    // Clear existing data to avoid conflicts
-    await Promise.all([
-        User.deleteMany({}), Game.deleteMany({}), Session.deleteMany({}),
-        Subscription.deleteMany({}), Achievement.deleteMany({}),
-        Billing.deleteMany({}), ServerNode.deleteMany({}), Addon.deleteMany({})
-    ]);
+    // // Clear existing data to avoid conflicts
+    // await Promise.all([
+    //     User.deleteMany({}), Game.deleteMany({}), Session.deleteMany({}),
+    //     Subscription.deleteMany({}), Achievement.deleteMany({}),
+    //     Billing.deleteMany({}), ServerNode.deleteMany({}), Addon.deleteMany({})
+    // ]);
 
     // 1. Seed Subscriptions
     await Subscription.insertMany([
@@ -55,59 +55,59 @@ mongoose.connect(process.env.MONGO_URI)
         { full_name: "Rohnny Ray", gamertag: "LaraCroft", email: "tomb@raider.com", country: "France", account_status: "ACTIVE", hashed_password: "dummy_hash_110" }
     ]);
 
-    // // 3. Seed Game Catalog
-    // await Game.insertMany([
-    //     { 
-    //         game_id: 501, 
-    //         title_name: "Halo Infinite", 
-    //         publisher: "Xbox Game Studios", 
-    //         genre: "FPS", 
-    //         is_cloud_enabled: true,
-    //         game_details: "Step inside the armor of humanity’s greatest hero to experience an epic adventure.",
-    //         game_image_url: "https://example.com/halo_cover.jpg",
-    //         game_price: 3999.00 
-    //     },
-    //     { 
-    //         game_id: 502, 
-    //         title_name: "Forza Horizon 5", 
-    //         publisher: "Playground Games", 
-    //         genre: "Racing", 
-    //         is_cloud_enabled: true,
-    //         game_details: "Your ultimate Horizon adventure awaits! Explore the vibrant landscapes of Mexico.",
-    //         game_image_url: "https://example.com/forza_cover.jpg",
-    //         game_price: 3499.50 
-    //     },
-    //     { 
-    //         game_id: 503, 
-    //         title_name: "Starfield", 
-    //         publisher: "Bethesda", 
-    //         genre: "RPG", 
-    //         is_cloud_enabled: true,
-    //         game_details: "The first new universe in over 25 years from the creators of Skyrim.",
-    //         game_image_url: "https://example.com/starfield_cover.jpg",
-    //         game_price: 4299.00 
-    //     },
-    //     { 
-    //         game_id: 504, 
-    //         title_name: "Gears 5", 
-    //         publisher: "The Coalition", 
-    //         genre: "Action", 
-    //         is_cloud_enabled: true,
-    //         game_details: "From one of gaming's most acclaimed sagas, Gears is bigger than ever.",
-    //         game_image_url: "https://example.com/gears_cover.jpg",
-    //         game_price: 2699.99 
-    //     },
-    //     { 
-    //         game_id: 505, 
-    //         title_name: "Sea of Thieves", 
-    //         publisher: "Rare", 
-    //         genre: "Adventure", 
-    //         is_cloud_enabled: true,
-    //         game_details: "The essential pirate experience, from sailing to exploring and looting.",
-    //         game_image_url: "https://example.com/sot_cover.jpg",
-    //         game_price: 1999.00 
-    //     }
-    // ]);
+    // 3. Seed Game Catalog
+    await Game.insertMany([
+        { 
+            game_id: 501, 
+            title_name: "Halo Infinite", 
+            publisher: "Xbox Game Studios", 
+            genre: "FPS", 
+            is_cloud_enabled: true,
+            game_details: "Step inside the armor of humanity’s greatest hero to experience an epic adventure.",
+            game_image_url: "https://example.com/halo_cover.jpg",
+            game_price: 3999.00 
+        },
+        { 
+            game_id: 502, 
+            title_name: "Forza Horizon 5", 
+            publisher: "Playground Games", 
+            genre: "Racing", 
+            is_cloud_enabled: true,
+            game_details: "Your ultimate Horizon adventure awaits! Explore the vibrant landscapes of Mexico.",
+            game_image_url: "https://example.com/forza_cover.jpg",
+            game_price: 3499.50 
+        },
+        { 
+            game_id: 503, 
+            title_name: "Starfield", 
+            publisher: "Bethesda", 
+            genre: "RPG", 
+            is_cloud_enabled: true,
+            game_details: "The first new universe in over 25 years from the creators of Skyrim.",
+            game_image_url: "https://example.com/starfield_cover.jpg",
+            game_price: 4299.00 
+        },
+        { 
+            game_id: 504, 
+            title_name: "Gears 5", 
+            publisher: "The Coalition", 
+            genre: "Action", 
+            is_cloud_enabled: true,
+            game_details: "From one of gaming's most acclaimed sagas, Gears is bigger than ever.",
+            game_image_url: "https://example.com/gears_cover.jpg",
+            game_price: 2699.99 
+        },
+        { 
+            game_id: 505, 
+            title_name: "Sea of Thieves", 
+            publisher: "Rare", 
+            genre: "Adventure", 
+            is_cloud_enabled: true,
+            game_details: "The essential pirate experience, from sailing to exploring and looting.",
+            game_image_url: "https://example.com/sot_cover.jpg",
+            game_price: 1999.00 
+        }
+    ]);
 
     // 4. Seed Server Nodes
     await ServerNode.insertMany([
