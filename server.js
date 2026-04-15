@@ -66,8 +66,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-
-
 // --- 1. IMPORT MODELS ---
 const User = require('./models/User_Profile');
 const Game = require('./models/Game_Catalog');
@@ -104,8 +102,6 @@ app.get('/api/users', async (req, res) => {
     try { res.json(await User.find()); }
     catch (err) { res.status(500).json({ error: "Error fetching User_Profile" }); }
 });
-
-
 
 app.get('/api/subscriptions', async (req, res) => {
     try { res.json(await Subscription.find()); }
@@ -196,6 +192,32 @@ app.get('/api/profile', async (req, res) => {
 
 });
 
+// routes/addonRoutes.js or inside your server.js
+const GameAddons = require('./models/Game_Addons'); // The schema you provided
+
+app.get('/api/addons/:game_id', async (req, res) => {
+    try {
+        const gId = parseInt(req.params.game_id);
+        const addons = await GameAddons.find({ game_id: gId });
+        res.status(200).json(addons);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch addons" });
+    }
+});
+
+// Fetch Billing History for a specific user
+app.get('/api/billing/history', async (req, res) => {
+    try {
+        const { email } = req.query;
+        if (!email) return res.status(400).json({error: "Email is required"});
+        const history = await Billing.find({ email: email }).sort({createdAt: -1});
+        res.json(history);
+    } catch (err) {
+        res.status(500).json({ error: "Error fetching billing history" });
+    }
+});
+
+
 // --- POST: SIGNUP ROUTE (Auto-generating ID via MongoDB _id) ---
 
 app.post('/api/signup', async (req, res) => {
@@ -279,33 +301,6 @@ app.post('/api/billing/add', async (req, res) => {
     }
 });
 
-
-// routes/addonRoutes.js or inside your server.js
-const GameAddons = require('./models/Game_Addons'); // The schema you provided
-
-app.get('/api/addons/:game_id', async (req, res) => {
-    try {
-        const gId = parseInt(req.params.game_id);
-        const addons = await GameAddons.find({ game_id: gId });
-        res.status(200).json(addons);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch addons" });
-    }
-});
-
-
-
-// Fetch Billing History for a specific user
-app.get('/api/billing/history', async (req, res) => {
-    try {
-        const { email } = req.query;
-        if (!email) return res.status(400).json({error: "Email is required"});
-        const history = await Billing.find({ email: email }).sort({createdAt: -1});
-        res.json(history);
-    } catch (err) {
-        res.status(500).json({ error: "Error fetching billing history" });
-    }
-});
 
 // --- 5. SERVER START ---
 // const PORT = process.env.PORT || 5000;
