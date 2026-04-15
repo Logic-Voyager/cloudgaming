@@ -283,7 +283,7 @@ app.post('/api/billing/add', async (req, res) => {
 // routes/addonRoutes.js or inside your server.js
 const GameAddons = require('./models/Game_Addons'); // The schema you provided
 
-router.get('/api/addons/:game_id', async (req, res) => {
+app.get('/api/addons/:game_id', async (req, res) => {
     try {
         const gId = parseInt(req.params.game_id);
         const addons = await GameAddons.find({ game_id: gId });
