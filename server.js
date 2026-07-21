@@ -14,11 +14,11 @@
 
 // // Add this in server.js after your middleware (app.use(cors)...)
 // app.get('/', (req, res) => {
-//     res.send("<h1>🚀 X-Cloud Nexus Backend is Online!</h1><p>Status: Connected to MongoDB Atlas</p>");
+//     res.send("<h1>  :) X-Cloud Nexus Backend is Online!</h1><p>Status: Connected to MongoDB Atlas</p>");
 // });
 
 // mongoose.connect(process.env.MONGO_URI)
-//     .then(() => console.log("🔥 X-Cloud Nexus: DB Connected Successfully"))
+//     .then(() => console.log(" X-Cloud Nexus: DB Connected Successfully"))
 //     .catch(err => console.log(err));
 
 // // Test Route: Fetch all users
@@ -28,7 +28,7 @@
 // });
 
 // const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
+// app.listen(PORT, () => console.log(` Server on port ${PORT}`));
 
 // // //api for games
 // // const Game = require('./models/Game'); // Import the model
@@ -60,6 +60,10 @@
 
 
 
+// --- 0. DNS FIX FOR WINDOWS / LOCAL NETWORK SRV ERRORS ---
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+dns.setServers(['8.8.8.8', '8.8.4.4']); // Bypasses local router DNS for SRV queries
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -87,8 +91,8 @@ app.use(express.json());
 // --- 3. DATABASE CONNECTION ---
 
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("🔥 X-Cloud Nexus: DB Connected Successfully"))
-    .catch(err => console.error("❌ MongoDB Connection Error:", err));
+    .then(() => console.log("X-Cloud Nexus: DB Connected Successfully"))
+    .catch(err => console.error(" MongoDB Connection Error:", err));
 
 // --- 4. API ROUTES ---
 
@@ -133,7 +137,6 @@ app.get('/api/billing', async (req, res) => {
     catch (err) { res.status(500).json({ error: "Error fetching Billing_History" }); }
 });
 
-
 app.get('/api/achievements', async (req, res) => {
     try { res.json(await Achievement.find()); }
     catch (err) { res.status(500).json({ error: "Error fetching Achievement_Log" }); }
@@ -173,7 +176,6 @@ app.get('/api/achievements', async (req, res) => {
 
 
 // --- GET: SPECIFIC USER PROFILE ---
-
 app.get('/api/profile', async (req, res) => {
     try {
         const { email } = req.query; // This looks for ?email=... in the URL
@@ -192,7 +194,7 @@ app.get('/api/profile', async (req, res) => {
 
 });
 
-// routes/addonRoutes.js or inside your server.js
+// Get : Specific Game Addons
 const GameAddons = require('./models/Game_Addons'); // The schema you provided
 
 app.get('/api/addons/:game_id', async (req, res) => {
@@ -218,7 +220,7 @@ app.get('/api/billing/history', async (req, res) => {
 });
 
 
-// --- POST: SIGNUP ROUTE (Auto-generating ID via MongoDB _id) ---
+// POST: SIGNUP ROUTE (Auto-generating ID via MongoDB _id) 
 
 app.post('/api/signup', async (req, res) => {
     try {
@@ -233,24 +235,23 @@ app.post('/api/signup', async (req, res) => {
         });
 
         const savedUser = await newUser.save();
-        // We return the auto-generated _id as 'user_id' for Himanshu
+        // We return the auto-generated _id as 'user_id'
 
         res.status(201).json({
             message: "User registered successfully!",
             user_id: savedUser._id,
             gamertag: savedUser.gamertag
         });
-        console.log(`✅ New user registered: ${gamertag} with MongoID: ${savedUser._id}`);
+        console.log(` New user registered: ${gamertag} with MongoID: ${savedUser._id}`);
 
     } catch (err) {
         console.error("Signup Error:", err);
-        res.status(500).json({ error: "Registration failed. Check if all placeholders are filled." });
+        res.status(500).json({ error: "Registration failed. This email id already exist" });
     }
 });
 
 
-
-// --- POST: LOGIN ROUTE (Simple check) ---
+// POST: LOGIN ROUTE (Simple check)
 app.post('/api/login', async (req, res) => {
     try {
         const { email, hashed_password } = req.body;
@@ -272,7 +273,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Add this under your API ROUTES section
+// Add the billing history POST command
 app.post('/api/billing/add', async (req, res) => {
     try {
         let uniqueId;
@@ -307,6 +308,6 @@ app.post('/api/billing/add', async (req, res) => {
 
 const PORT = process.env.PORT || 10000; // Render likes port 10000
 app.listen(PORT, () => {
-    console.log(`🚀 X-Cloud Server running on port ${PORT}`);
-    console.log(`🔗 Checking from Phone? Use your Ngrok URL!`);
+    console.log(` X-Cloud Server running on port ${PORT}`);
+    console.log(` Checking from Phone? Use your Ngrok URL!`);
 });

@@ -1,3 +1,8 @@
+// --- 0. DNS FIX FOR WINDOWS / LOCAL NETWORK SRV ERRORS ---
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -15,12 +20,13 @@ mongoose.connect(process.env.MONGO_URI)
 .then(async () => {
     console.log("🌱 Seeding Updated X-Cloud Nexus Data to Atlas...");
 
-    // // Clear existing data to avoid conflicts
-    // await Promise.all([
-    //     User.deleteMany({}), Game.deleteMany({}), Session.deleteMany({}),
-    //     Subscription.deleteMany({}), Achievement.deleteMany({}),
-    //     Billing.deleteMany({}), ServerNode.deleteMany({}), Addon.deleteMany({})
-    // ]);
+    // Clear existing data to prevent duplicate keys or bloated collections
+    console.log("🧹 Clearing old data...");
+    await Promise.all([
+        User.deleteMany({}), Game.deleteMany({}), Session.deleteMany({}),
+        Subscription.deleteMany({}), Achievement.deleteMany({}),
+        Billing.deleteMany({}), ServerNode.deleteMany({}), Addon.deleteMany({})
+    ]);
 
     // 1. Seed Subscriptions
     await Subscription.insertMany([
@@ -40,8 +46,7 @@ mongoose.connect(process.env.MONGO_URI)
         }
     ]);
 
-    // 2. Seed 10 User Profiles (user_id field REMOVED)
-
+    // 2. Seed 10 User Profiles
     await User.insertMany([
         { full_name: "John-117", gamertag: "MasterChief117", email: "chief@unsc.com", country: "USA", account_status: "ACTIVE", hashed_password: "dummy_hash_101" },
         { full_name: "Jack-117", gamertag: "NobleSix", email: "six@reach.com", country: "India", account_status: "ACTIVE", hashed_password: "dummy_hash_102" },
@@ -139,8 +144,11 @@ mongoose.connect(process.env.MONGO_URI)
         { addon_id: 302, game_id: 502, addon_name: "Hot Wheels Expansion", price: 19.99 }
     ]);
 
-    console.log("✅ X-Cloud Nexus: All 8 Collections Seeded Successfully (without manual user_id)!");
-    process.exit();
+    console.log("✅ X-Cloud Nexus: All 8 Collections Seeded Successfully!");
+    
+    // Graceful exit
+    await mongoose.connection.close();
+    process.exit(0);
 })
 .catch(err => {
     console.error("❌ Seed Error:", err);
