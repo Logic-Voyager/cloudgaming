@@ -4,6 +4,8 @@ A full-stack cloud gaming platform designed to provide users with a seamless gam
 
 The project focuses on building the foundation of a scalable cloud gaming ecosystem with modern web technologies, database integration, and future support for game streaming infrastructure.
 
+This repository contains the **Backend API**, built to connect seamlessly with the **Flutter mobile/web app** frontend and **MongoDB Atlas** database.
+
 ---
 
 ## 🚀 Features
@@ -15,7 +17,7 @@ The project focuses on building the foundation of a scalable cloud gaming ecosys
 - ✅ Git-based version control workflow
 
 ### Planned Features
-- 🔐 User authentication and authorization
+- 🔐 JWT authentication and authorization
 - 👤 User profiles and gaming history
 - 🎮 Game library management
 - 🔍 Search and filtering of games
@@ -33,13 +35,13 @@ The project focuses on building the foundation of a scalable cloud gaming ecosys
 
 CloudGaming
 │
-├── frontend
+├── Flutter App (Frontend)
 │   ├── User Interface
 │   ├── Game browsing
 │   └── Client-side features
 │
-├── backend
-│   ├── API services
+├── Express API (Backend - This Repo)
+│   ├── API services & routes
 │   ├── Authentication
 │   ├── Business logic
 │   └── Database connection
@@ -56,10 +58,7 @@ CloudGaming
 # 🛠️ Tech Stack
 
 ## Frontend
-- React.js
-- HTML5
-- CSS3
-- JavaScript
+- Flutter (Dart)
 
 ## Backend
 - Node.js
@@ -77,67 +76,172 @@ CloudGaming
 
 ---
 
+
 # 🗄️ Database Design
 
 The application uses MongoDB Atlas as the cloud database.
 
-Planned collections:
+Primary collections:
 
-## Users
+## User_Profile
 
-Stores user information.
+Stores user credentials, gamertag, and account status.
 
-```
-
-Users
+```text
+User_Profile
 |
 ├── _id
-├── username
+├── full_name
+├── gamertag
 ├── email
-├── password
+├── hashed_password
+├── country
+├── account_status
 ├── createdAt
-└── gamingHistory
+└── updatedAt
 
 ```
 
 ---
 
-## Games
+## Game_Catalog
 
-Stores available games.
+Stores available cloud games and metadata.
 
-```
-
-Games
+```text
+Game_Catalog
 |
 ├── _id
+├── game_id
 ├── title
-├── description
-├── category
-├── thumbnail
+├── genre
+├── publisher
 ├── rating
-└── createdAt
+├── is_4k_supported
+├── createdAt
+└── updatedAt
 
 ```
 
 ---
 
-## Gaming Sessions
+## Game_Addons
 
-Tracks cloud gaming activity.
+Stores downloadable content and cosmetics for games.
+
+```text
+Game_Addons
+|
+├── _id
+├── game_id
+├── addon_title
+├── type
+├── price
+├── createdAt
+└── updatedAt
 
 ```
 
-Sessions
+---
+
+## Subscription_Tier
+
+Stores available membership plans and stream limits.
+
+```text
+Subscription_Tier
 |
 ├── _id
-├── userId
-├── gameId
-├── startTime
-├── endTime
-└── duration
+├── tier_name
+├── price_monthly
+├── max_resolution
+├── simultaneous_streams
+├── createdAt
+└── updatedAt
 
-````
+```
+
+---
+
+## Billing_History
+
+Tracks user payment logs and subscription charges.
+
+```text
+Billing_History
+|
+├── _id
+├── transaction_id
+├── user_email
+├── amount
+├── payment_method
+├── payment_status
+├── createdAt
+└── updatedAt
+
+```
+
+---
+
+## Streaming_Session
+
+Tracks active and past cloud gaming streaming sessions.
+
+```text
+Streaming_Session
+|
+├── _id
+├── session_id
+├── user_email
+├── game_title
+├── resolution
+├── fps
+├── latency_ms
+├── session_status
+├── createdAt
+└── updatedAt
+
+```
+
+---
+
+## Server_Node
+
+Monitors infrastructure hardware and regional server loads.
+
+```text
+Server_Node
+|
+├── _id
+├── node_id
+├── region
+├── gpu_type
+├── status
+├── load_percentage
+├── createdAt
+└── updatedAt
+
+```
+
+---
+
+## Achievement_Log
+
+Stores unlocked gaming achievements and reward points.
+
+```text
+Achievement_Log
+|
+├── _id
+├── user_email
+├── game_title
+├── achievement_title
+├── points_awarded
+├── createdAt
+└── updatedAt
+
+```
+
 
 ---
 
@@ -174,7 +278,13 @@ MONGO_URI=your_mongodb_atlas_connection_string
 PORT=5000
 ```
 
-Start backend:
+Seed the database with initial data:
+
+```bash
+npm run seed.js
+```
+
+Start backend(Development Mode)
 
 ```bash
 npm start
@@ -183,31 +293,21 @@ npm start
 Expected output:
 
 ```
-MongoDB Connected
-Server running on port 5000
+X-Cloud Server running on port 10000
+X-Cloud Nexus: DB Connected Successfully
 ```
 
 ---
 
-# Frontend Setup
+# Connecting to Flutter Frontend
 
-Navigate to frontend:
+When connecting your Flutter application to this backend:
 
-```bash
-cd frontend
-```
+1. Android Emulator: Use http://10.0.2.2:10000/api
 
-Install dependencies:
+2. iOS Simulator / Local Web: Use http://localhost:10000/api
 
-```bash
-npm install
-```
-
-Run development server:
-
-```bash
-npm run dev
-```
+3. Physical Device: Use your local network IP or an Ngrok tunnel (ngrok http 10000).
 
 ---
 
@@ -264,22 +364,23 @@ mongodb+srv://username:password@cluster.mongodb.net/cloudgaming
 
 ## Phase 2 — Backend Development
 
-* [ ] Create API structure
-* [ ] User authentication
-* [ ] Database models
-* [ ] CRUD operations
+* [x] Create API structure
+* [x] Database models (Mongoose)
+* [x] Seed data scripts
+* [x] CRUD operations
+* [ ] JWT Authentication
 
 ## Phase 3 — Frontend Development
 
-* [ ] UI design
-* [ ] Authentication pages
-* [ ] Game dashboard
-* [ ] User profile
+* [x] UI design & layout
+* [x] Authentication pages
+* [x] Game dashboard & API fetch
+* [x] User profile
 
 ## Phase 4 — Cloud Gaming Features
 
 * [ ] Gaming session management
-* [ ] Streaming architecture
+* [ ] WebRTC Streaming architecture
 * [ ] Performance monitoring
 * [ ] Recommendation system
 
@@ -294,6 +395,9 @@ mongodb+srv://username:password@cluster.mongodb.net/cloudgaming
 * Cloud infrastructure deployment
 * Scalable microservice architecture
 
+```
+**currenlty "real-time game streaming" not completed**
+```
 ---
 
 # 🤝 Contribution
@@ -327,19 +431,14 @@ git push origin feature-name
 
 # 📄 License
 
-This project is developed for learning, experimentation, and portfolio purposes.
+This project is developed for learning, experimentation, and scalable purposes.
 
 ---
 
 # 👨‍💻 Author
 
-**Squirrel**
+**Logic-Voyager**
 
-GitHub: <your-github-link>
+GitHub: <https://github.com/Logic-Voyager/cloudgaming>
 
-LinkedIn: <your-linkedin-link>
 
-```
-
-A small suggestion: **do not add "real-time game streaming" as completed** in your GitHub description yet. Keep it under "Planned Features" until you actually implement WebRTC/game server integration. This README will look professional while staying technically honest.
-```
