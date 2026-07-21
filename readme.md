@@ -1,12 +1,3 @@
-Since we are at the **initial MongoDB Atlas connection stage**, I’ll make a professional README that fits a portfolio project but does not falsely claim features that are not built yet.
-
-You can copy-paste this directly into:
-
-```text
-README.md
-```
-
-```markdown
 # 🎮 CloudGaming Platform
 
 A full-stack cloud gaming platform designed to provide users with a seamless gaming experience through game discovery, user management, and cloud-based gaming services.
